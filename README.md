@@ -107,30 +107,144 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
 
 ![](images/lab/24.png)
 ![](images/lab/25.png)
+![](images/lab/41.png)
 
 10. La cantidad de CPU consumida es bastante grande y un conjunto considerable de peticiones concurrentes pueden hacer fallar nuestro servicio. Para solucionarlo usaremos una estrategia de Escalamiento Vertical. En Azure diríjase a la sección *size* y a continuación seleccione el tamaño `B2ms`.
 
 ![Imágen 3](images/part1/part1-vm-resize.png)
 
+![](images/lab/26.png)
+
 11. Una vez el cambio se vea reflejado, repita el paso 7, 8 y 9.
+
+![](images/lab/27.png)
+![](images/lab/28.png)
+![](images/lab/29.png)
+![](images/lab/30.png)
+![](images/lab/31.png)
+![](images/lab/32.png)
+![](images/lab/33.png)
+![](images/lab/34.png)
+![](images/lab/35.png)
+![](images/lab/36.png)
+![](images/lab/37.png)
+![](images/lab/38.png)
+
 12. Evalue el escenario de calidad asociado al requerimiento no funcional de escalabilidad y concluya si usando este modelo de escalabilidad logramos cumplirlo.
+
+    No se cumple ya que todas las peticiones no fueron correctamente repondidas, aunque el consumo de CPU no supero el 70%.
+
 13. Vuelva a dejar la VM en el tamaño inicial para evitar cobros adicionales.
+
+![](images/lab/39.png)
 
 **Preguntas**
 
 1. ¿Cuántos y cuáles recursos crea Azure junto con la VM?
+
+Azure junto con la VM crea 6 recursos adicionales que son:
+![](images/lab/40.png)
+
 2. ¿Brevemente describa para qué sirve cada recurso?
+    1. VERTICAL-SCALABILITY (Virtual machine):
+    Sirve para ejecutar aplicaciones, servicios o laboratorios.
+
+    2. vertical-scalability778_z1 (Network Interface – NIC)
+    Permite que la VM tenga una dirección IP privada dentro de la red y se comunique con otros recursos.
+
+    3. VERTICAL-SCALABILITY-nsg (Network Security Group)
+    Controla qué tráfico entra y sale mediante reglas (por ejemplo, permitir SSH o HTTP).
+
+    4. VERTICAL-SCALABILITY-ip (Public IP Address)
+    Sirve para acceder a ella desde Internet (por ejemplo, mediante SSH o para exponer servicios).
+
+    5. vnet-canadacentral (Virtual Network – VNet)
+    Define el espacio de direcciones IP, subredes y la comunicación entre recursos internos.
+
+    6. SCALABILITY_LAB (Resource group)
+    Sirve para administrar, organizar y eliminar los recursos asociados a tu laboratorio de escalabilidad.
+
 3. ¿Al cerrar la conexión ssh con la VM, por qué se cae la aplicación que ejecutamos con el comando `npm FibonacciApp.js`? ¿Por qué debemos crear un *Inbound port rule* antes de acceder al servicio?
+
+    El comando npm FibonacciApp.js inicia un proceso que solo funciona si hay una conexión activa. Si la conexión se cierra, la aplicación se cierra y deja de funcionar.
+    Debemos crear un Inbound port rule para permitir el tráfico de entrada al puerto 3000, ya que por defecto Azure no permite el tráfico de entrada a ningún puerto, y este es necesario para que la aplicación funcione.
+
 4. Adjunte tabla de tiempos e interprete por qué la función tarda tando tiempo.
+
+    La aplicación tarda tanto porque se calculan todos los números de la secuencia de Fibonacci hasta el número que se desea calcular, y esto toma mucho tiempo.
+
+    Antes del escalamiento:
+    ![](images/lab/13.png)
+    ![](images/lab/14.png)
+    ![](images/lab/15.png)
+    ![](images/lab/16.png)
+    ![](images/lab/17.png)
+    ![](images/lab/18.png)
+    ![](images/lab/19.png)
+    ![](images/lab/20.png)
+    ![](images/lab/21.png)
+    ![](images/lab/22.png)
+
+    Después del escalamiento:
+    ![](images/lab/27.png)
+    ![](images/lab/28.png)
+    ![](images/lab/29.png)
+    ![](images/lab/30.png)
+    ![](images/lab/31.png)
+    ![](images/lab/32.png)
+    ![](images/lab/33.png)
+    ![](images/lab/34.png)
+    ![](images/lab/35.png)
+    ![](images/lab/36.png)
+
 5. Adjunte imágen del consumo de CPU de la VM e interprete por qué la función consume esa cantidad de CPU.
+
+    La función consume esa cantidad de CPU porque se calculan todos los números de la secuencia de Fibonacci hasta el número que se desea calcular, y esto necesita muchos recursos de CPU.
+
+    Antes del escalamiento:
+    ![](images/lab/23.png)
+
+    Después del escalamiento:
+    ![](images/lab/37.png)
+
 6. Adjunte la imagen del resumen de la ejecución de Postman. Interprete:
     * Tiempos de ejecución de cada petición.
+
+        Antes de hacer el escalamiento el tiempo fue mayor.
+
+        Antes del escalamiento:
+        ![](images/lab/41.png)
+        Después del escalamiento:
+        ![](images/lab/38.png)
+
     * Si hubo fallos documentelos y explique.
+
+        El error ECONNRESET significa que la conexión TCP en su cliente Postman fue cerrada inesperadamente por el servidor o algún intermediario como un proxy. En el contexto de su prueba de Postman, parece que la solicitud a la API "fibonacci" en la iteración 2 fue interrumpida antes de que pudiera completarse. Este error puede ser causado por varias razones, como un servidor que se cierra inesperadamente, un tiempo de espera de la conexión, problemas de red, etc.
+
+        ![](images/lab/42.png)
+
 7. ¿Cuál es la diferencia entre los tamaños `B2ms` y `B1ls` (no solo busque especificaciones de infraestructura)?
+
+    La principal diferencia entre los tamaños B2ms y B1ls no es solo técnica, sino en su capacidad real de uso y rendimiento. La B2ms es una máquina pequeña-mediana que permite ejecutar aplicaciones web, servicios con varios hilos, pruebas de carga y procesos que requieren memoria, ofreciendo un desempeño estable y útil para escenarios reales. En cambio, la B1ls es la máquina más básica de Azure: extremadamente limitada, con recursos mínimos que solo sirven para tareas simples, scripts o pruebas muy ligeras, y que se congela fácilmente ante cualquier carga significativa. En resumen, B2ms es adecuada para trabajo real y pruebas de escalabilidad, mientras que B1ls es solo para usos básicos y no soporta aplicaciones exigentes.
+
 8. ¿Aumentar el tamaño de la VM es una buena solución en este escenario?, ¿Qué pasa con la FibonacciApp cuando cambiamos el tamaño de la VM?
+
+    No, porque el aumento del tamaño de la VM no es una solución escalable, ya que si se aumenta el número de peticiones, la VM no podrá procesarlas todas y se volverá a tener el mismo problema de consumo de CPU. Cuando se cambia el tamaño de la VM, la aplicación deja de funcionar y se debe volver a ejecutar.
+
 9. ¿Qué pasa con la infraestructura cuando cambia el tamaño de la VM? ¿Qué efectos negativos implica?
+
+    Al cambiar el tamaño de la VM, se debe reiniciar la máquina, por lo que se pierde la conexión ssh y la aplicación deja de funcionar.
+
 10. ¿Hubo mejora en el consumo de CPU o en los tiempos de respuesta? Si/No ¿Por qué?
+
+    Sí, porque al aumentar el tamaño de la VM, se aumenta la cantidad de CPU y memoria RAM, por lo que la aplicación puede procesar más peticiones en menos tiempo.
+
 11. Aumente la cantidad de ejecuciones paralelas del comando de postman a `4`. ¿El comportamiento del sistema es porcentualmente mejor?
+
+    No, aunque se lograron procesar las peticiones se evidencio un aumento en el uso del CPU. 
+
+    ![](images/lab/43.png)
+    ![](images/lab/44.png)
 
 ### Parte 2 - Escalabilidad horizontal
 
