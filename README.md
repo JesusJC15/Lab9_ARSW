@@ -256,21 +256,35 @@ Antes de continuar puede eliminar el grupo de recursos anterior para evitar gast
 
 ![](images/part2/part2-lb-create.png)
 
+![](images/lab/parte2/1.png)
+![](images/lab/parte2/2.png)
+![](images/lab/parte2/3.png)
+
 2. A continuación cree un *Backend Pool*, guiese con la siguiente imágen.
 
 ![](images/part2/part2-lb-bp-create.png)
+
+![](images/lab/parte2/4.png)
 
 3. A continuación cree un *Health Probe*, guiese con la siguiente imágen.
 
 ![](images/part2/part2-lb-hp-create.png)
 
+![](images/lab/parte2/5.png)
+
 4. A continuación cree un *Load Balancing Rule*, guiese con la siguiente imágen.
 
 ![](images/part2/part2-lb-lbr-create.png)
 
+![](images/lab/parte2/6.png)
+
 5. Cree una *Virtual Network* dentro del grupo de recursos, guiese con la siguiente imágen.
 
 ![](images/part2/part2-vn-create.png)
+
+![](images/lab/parte2/7.png)
+![](images/lab/parte2/8.png)
+![](images/lab/parte2/9.png)
 
 #### Crear las maquinas virtuales (Nodos)
 
@@ -280,33 +294,85 @@ Ahora vamos a crear 3 VMs (VM1, VM2 y VM3) con direcciones IP públicas standar 
 
 ![](images/part2/part2-vm-create1.png)
 
+![](images/lab/parte2/10.1.png)
+![](images/lab/parte2/10.2.png)
+![](images/lab/parte2/10.3.png)
+
 2. En la configuración de networking, verifique que se ha seleccionado la *Virtual Network*  y la *Subnet* creadas anteriormente. Adicionalmente asigne una IP pública y no olvide habilitar la redundancia de zona.
 
 ![](images/part2/part2-vm-create2.png)
+
+![](images/lab/parte2/11.1.png)
+![](images/lab/parte2/11.2.png)
+![](images/lab/parte2/11.3.png)
+
+![](images/lab/parte2/ipvm3.png)
 
 3. Para el Network Security Group seleccione "avanzado" y realice la siguiente configuración. No olvide crear un *Inbound Rule*, en el cual habilite el tráfico por el puerto 3000. Cuando cree la VM2 y la VM3, no necesita volver a crear el *Network Security Group*, sino que puede seleccionar el anteriormente creado.
 
 ![](images/part2/part2-vm-create3.png)
 
+![](images/lab/parte2/12.1.png)
+
 4. Ahora asignaremos esta VM a nuestro balanceador de carga, para ello siga la configuración de la siguiente imágen.
 
 ![](images/part2/part2-vm-create4.png)
 
+![](images/lab/parte2/13.1.png)
+
+![](images/lab/parte2/14.1.png)
+![](images/lab/parte2/14.2.png)
+![](images/lab/parte2/14.3.png)
+
 5. Finalmente debemos instalar la aplicación de Fibonacci en la VM. para ello puede ejecutar el conjunto de los siguientes comandos, cambiando el nombre de la VM por el correcto
 
-```
 git clone https://github.com/daprieto1/ARSW_LOAD-BALANCING_AZURE.git
 
+![](images/lab/parte2/15.1.png)
+![](images/lab/parte2/15.2.png)
+![](images/lab/parte2/15.3.png)
+
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+
+![](images/lab/parte2/16.1.png)
+![](images/lab/parte2/16.2.png)
+![](images/lab/parte2/16.3.png)
+
 source /home/vm1/.bashrc
+
+![](images/lab/parte2/17.1.png)
+![](images/lab/parte2/17.2.png)
+![](images/lab/parte2/17.3.png)
+
 nvm install node
 
+![](images/lab/parte2/18.1.png)
+![](images/lab/parte2/18.2.png)
+![](images/lab/parte2/18.3.png)
+
 cd ARSW_LOAD-BALANCING_AZURE/FibonacciApp
+
+![](images/lab/parte2/19.1.png)
+![](images/lab/parte2/19.2.png)
+![](images/lab/parte2/19.3.png)
+
 npm install
 
+![](images/lab/parte2/20.1.png)
+![](images/lab/parte2/20.2.png)
+![](images/lab/parte2/20.3.png)
+
 npm install forever -g
+
+![](images/lab/parte2/21.1.png)
+![](images/lab/parte2/21.2.png)
+![](images/lab/parte2/21.3.png)
+
 forever start FibonacciApp.js
-```
+
+![](images/lab/parte2/22.1.png)
+![](images/lab/parte2/22.2.png)
+![](images/lab/parte2/22.3.png)
 
 Realice este proceso para las 3 VMs, por ahora lo haremos a mano una por una, sin embargo es importante que usted sepa que existen herramientas para aumatizar este proceso, entre ellas encontramos Azure Resource Manager, OsDisk Images, Terraform con Vagrant y Paker, Puppet, Ansible entre otras.
 
@@ -319,7 +385,63 @@ http://52.155.223.248/
 http://52.155.223.248/fibonacci/1
 ```
 
+![](images/lab/parte2/23.png)
+![](images/lab/parte2/24.png)
+
 2. Realice las pruebas de carga con `newman` que se realizaron en la parte 1 y haga un informe comparativo donde contraste: tiempos de respuesta, cantidad de peticiones respondidas con éxito, costos de las 2 infraestrucruras, es decir, la que desarrollamos con balanceo de carga horizontal y la que se hizo con una maquina virtual escalada.
+
+Escalabilidad Vertical
+
+- Antes de implementación:
+
+![](images/lab/41.png)
+
+-Después de implementación:
+
+![](images/lab/38.png)
+
+Escalabilidad Horizontal
+
+![](images/lab/parte2/25.png)
+
+| Estrategia             | Estado               | Promedio de respuesta | Min    | Max    | Fallos de requests |
+| ---------------------- | -------------------- | --------------------- | ------ | ------ | ------------------ |
+| **Vertical (Antes)**   | VM sin escalar       | **20.3 s**            | 16.1 s | 32.1 s | **4 fallos**       |
+| **Vertical (Después)** | VM escalada          | **15.9 s**            | 11.3 s | 22.5 s | **5 fallos**       |
+| **Horizontal**         | 2 VM + Load Balancer | **12.8 s**            | 11.0 s | 19.8 s | **1 fallo**        |
+
+#### Tiempos de Respuesta
+
+- La escalabilidad vertical mejoró los tiempos respecto al estado inicial (20.3 s → 15.9 s).
+
+- La escalabilidad horizontal ofrece el mejor rendimiento, logrando el menor promedio (12.8 s) incluso cuando maneja carga distribuida.
+
+    El tiempo máximo también mejora de forma notable con horizontal (19.8 s vs 32.1 s).
+
+Conclusión: la estrategia horizontal gestiona mejor el cálculo intensivo, ya que reparte la carga entre varias instancias.
+
+#### Cantidad de Peticiones Fallidas
+
+- Vertical antes: 4 fallos.
+
+- Vertical después: sorprendentemente subió a 5 fallos.
+
+- Horizontal: solo 1 fallo.
+
+Conclusión: en vertical, incluso con más recursos la app falló más. La infraestructura horizontal reduce fallos gracias al balanceador que reparte la carga entre nodos disponibles.
+
+#### Consumo y Costos de Infraestructura
+
+Escalabilidad Vertical
+- Requiere una sola máquina, pero con más vCPU y memoria.
+- Los costos crecen linealmente y tienden a ser más altos al aumentar el tamaño de la máquina.
+- Mayor riesgo: si la VM cae, todo el servicio cae.
+
+Escalabilidad Horizontal
+- Usa máquinas pequeñas, más baratas.
+- Añade un Load Balancer, que tiene un costo adicional bajo.
+- Es más flexible: se pueden encender o apagar instancias según demanda.
+- Permite alta disponibilidad.
 
 3. Agregue una 4 maquina virtual y realice las pruebas de newman, pero esta vez no lance 2 peticiones en paralelo, sino que incrementelo a 4. Haga un informe donde presente el comportamiento de la CPU de las 4 VM y explique porque la tasa de éxito de las peticiones aumento con este estilo de escalabilidad.
 
@@ -330,18 +452,219 @@ newman run ARSW_LOAD-BALANCING_AZURE.postman_collection.json -e [ARSW_LOAD-BALAN
 newman run ARSW_LOAD-BALANCING_AZURE.postman_collection.json -e [ARSW_LOAD-BALANCING_AZURE].postman_environment.json -n 10
 ```
 
+No se pudo realizar ya que la suscripción solo dejaba tener 3 ip públicas creadas a la vez las cuales fueron:
+
+- Balanceador de carga.
+- Maquina Virtual 1.
+- Maquina Virtual 2.
+
+![](images/lab/parte2/ipvm3.png)
+
+Aunque igualmente se ejecutó con las VM1 y VM2:
+
+![](images/lab/parte2/26.png)
+![](images/lab/parte2/27.png)
+![](images/lab/parte2/28.png)
+
+Escalar horizontalmente aumentó la capacidad efectiva para atender peticiones concurrentes porque multiplicó el número de procesos independientes que pueden ejecutar cálculos CPU-intensivos en paralelo, reduciendo bloqueo en el event-loop y evitando colas/tiempos de espera que provocan fallos.
+
+Al aumentar las réplicas (2 VMs) y la concurrencia a 4 peticiones paralelas, la carga se reparte entre más procesos independientes, lo que reduce el bloqueo por CPU en cada VM, baja los picos individuales y mejora la tasa de éxito y la estabilidad del servicio.
+
 **Preguntas**
 
-* ¿Cuáles son los tipos de balanceadores de carga en Azure y en qué se diferencian?, ¿Qué es SKU, qué tipos hay y en qué se diferencian?, ¿Por qué el balanceador de carga necesita una IP pública?
+* ¿Cuáles son los tipos de balanceadores de carga en Azure y en qué se diferencian?
+
+    1. Azure Load Balancer
+
+    - Funciona en la capa 4 (TCP/UDP).
+    - Distribuye tráfico interno o externo.
+    - Alta velocidad y bajo costo.
+    - Ejemplos: balancear tráfico a VMs, gateways o appliances.
+
+    2. Azure Application Gateway
+    - Funciona en la capa 7 (HTTP/HTTPS).
+
+    - Puede hacer:
+        - Reglas basadas en URL
+        - WAF (Web Application Firewall)
+        - Redirecciones
+
+        - Enrutamiento basado en hostnames (path-based routing)
+    - Ideal para aplicaciones web.
+
+    3. Azure Front Door
+    - Servicio global (edge).
+    - CDN + balanceo de capa 7.
+    - Optimiza latencia mundial.
+    - Ideal para apps globales de alto tráfico.
+
+* ¿Qué es SKU, qué tipos hay y en qué se diferencian?
+
+    SKU (Stock Keeping Unit) en Azure significa la categoría del producto, que define:
+    - Capacidad
+    - Rendimiento
+    - Funcionalidades
+    - Precio
+
+    Tipos de SKU del Load Balancer:
+    1. Basic
+        - Para ambientes de prueba.
+        - No soporta zonas de disponibilidad.
+        - Menor resiliencia.
+        - Menos características.
+
+    2. Standard
+        - Producción.
+        - Incluye alta disponibilidad, seguridad y métricas mejoradas.
+        - Soporta Availability Zones.
+        - Más capacidad y mejor rendimiento.
+
+    Diferencias clave:
+    - Standard es más seguro.
+    - Standard permite zonas de disponibilidad.
+    - Standard soporta más conexiones simultáneas.
+    - Basic es más limitado y no se recomienda para producción.
+
+* ¿Por qué el balanceador de carga necesita una IP pública?
+
+    Porque una IP pública permite que clientes desde Internet puedan:
+    - Acceder al servicio detrás del balanceador.
+    - Enviar tráfico entrante al Load Balancer.
+    - Permitir que Azure asigne tráfico a las VMs conectadas al Backend Pool.
+
+    Sin una IP pública, el servicio solo funcionaría internamente dentro de la red (Virtual Network).
+
 * ¿Cuál es el propósito del *Backend Pool*?
+
+    El Backend Pool es el conjunto de máquinas virtuales o recursos hacia donde el Load Balancer distribuye el tráfico.
+
+    Azure reparte las peticiones dependiendo de:
+    - Reglas de balanceo
+    - Algoritmo de distribución
+    - Estado de salud (Health Probe)
+
 * ¿Cuál es el propósito del *Health Probe*?
+
+    El Health Probe verifica el estado de cada máquina del Backend Pool.
+
+    Su función es:
+    - Enviar pings o solicitudes HTTP/TCP a cada VM.
+    - Detectar si una instancia está saludable o caída.
+    - Sacar temporalmente del pool a las máquinas que no respondan.
+
+    Esto evita que el Load Balancer envíe tráfico a un servidor que:
+    - Está apagado
+    - Está saturado
+    - Tiene errores
+
 * ¿Cuál es el propósito de la *Load Balancing Rule*? ¿Qué tipos de sesión persistente existen, por qué esto es importante y cómo puede afectar la escalabilidad del sistema?.
-* ¿Qué es una *Virtual Network*? ¿Qué es una *Subnet*? ¿Para qué sirven los *address space* y *address range*?
-* ¿Qué son las *Availability Zone* y por qué seleccionamos 3 diferentes zonas?. ¿Qué significa que una IP sea *zone-redundant*?
+
+    La Load Balancing Rule define cómo el tráfico será distribuido:
+
+    - Puerto de entrada (frontend)
+    - Puerto de destino (backend)
+    - Protocolo (TCP/UDP)
+    - Método de distribución
+    - Uso de sesión persistente
+
+    Tipos de sesión persistente
+
+    1. None (sin persistencia)
+        - Cada solicitud puede ir a una VM distinta (Round Robin).
+        - Máxima escalabilidad.
+        - Ideal para apps stateless.
+
+    2. Client IP
+        - El cliente siempre va a la misma VM si es posible.
+        - Evita romper sesiones.
+
+    3. Client IP + Protocol
+        - Aún más estricta.
+        - El usuario queda “pegado” a la misma VM para una combinación IP+protocolo.
+
+    ¿Por qué es importante?
+    - Influye en la escalabilidad y el rendimiento.
+    - Mucha persistencia = menos balanceo = posibles saturaciones.
+
+    Impacto en escalabilidad
+    - Persistencia None → mejor para horizontal scaling.
+    - Persistencia estricta → puede generar cuellos de botella.
+
+* ¿Qué es una *Virtual Network*?
+
+    Una Virtual Network es la red privada en la nube donde viven:
+    - Máquinas virtuales
+    - Subnets
+    - Balanceadores
+    - Bases de datos
+    - Gateways
+
+* ¿Qué es una *Subnet*?
+
+    Una Subnet es una división lógica dentro de una VNet.
+
+    Sirve para:
+    - Organizar recursos por zonas (web, backend, BD)
+    - Controlar tráfico y seguridad
+    - Asignar políticas diferentes mediante NSGs
+
+* ¿Para qué sirven los *address space* y *address range*?
+
+    Address Space
+
+    - Es el rango total de IPs que tiene la Virtual Network.
+
+    Address Range (o prefijo de Subnet)
+
+    - Es el rango de IP de una Subnet dentro del address space.
+
+    Relación:
+    El subnet range debe estar contenido dentro del address space.
+
+* ¿Qué son las *Availability Zone* y por qué seleccionamos 3 diferentes zonas?.
+
+    Son zonas físicas independientes dentro de una misma región de Azure:
+    - Tienen energía, red y cooling propios.
+    - Están separadas para evitar que un desastre afecte todas las zonas.
+
+    Al seleccionar 2 o 3 zonas:
+    - Garantizas alta disponibilidad.
+    - El sistema sigue funcionando incluso si una zona completa falla.
+
+    ¿Por qué seleccionamos 3?
+
+    Porque Azure Load Balancer Standard soporta “zone-redundancy”, lo que significa:
+    - El tráfico entrante se distribuye entre VMs en diferentes zonas.
+    - Mayor tolerancia a fallos.
+
+* ¿Qué significa que una IP sea *zone-redundant*?
+
+    Que la IP pública no pertenece a una zona específica sino a todas las zonas disponibles.
+
+    Ventajas:
+    - Si la Zona 1 cae, la IP sigue disponible en Zonas 2 y 3.
+    - Alta disponibilidad de nivel regional.
+
 * ¿Cuál es el propósito del *Network Security Group*?
+
+    El NSG actúa como un firewall.
+
+    Su función es:
+    - Permitir o bloquear tráfico hacia VMs, subnets o interfaces.
+    - Definir reglas de entrada y salida por:
+        - IP origen
+        - IP destino
+        - Protocolo (TCP/UDP)
+        - Puerto
+
+    Es fundamental para:
+    - Seguridad
+    - Segmentación
+    - Proteger la aplicación del tráfico no autorizado
+
 * Informe de newman 1 (Punto 2)
+
+![](images/lab/parte2/25.png)
+
 * Presente el Diagrama de Despliegue de la solución.
-
-
-
 
