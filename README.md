@@ -668,34 +668,4 @@ Al aumentar las réplicas (2 VMs) y la concurrencia a 4 peticiones paralelas, la
 
 * Presente el Diagrama de Despliegue de la solución.
 
-## Diagrama de Despliegue
-
-El diagrama de despliegue muestra la arquitectura completa de la solución con escalabilidad horizontal implementada en Azure:
-
-![Diagrama de Despliegue](Diagrama%20de%20Despliegue%20-%20Escalabilidad%20Horizontal%20Azure.png)
-
-El diagrama incluye:
-- **Azure Load Balancer**: Balanceador de carga público con IP zone-redundant
-- **Backend Pool**: 3 máquinas virtuales distribuidas en 3 zonas de disponibilidad
-- **Health Probe**: Verificación de salud de las VMs en el puerto 3000
-- **Virtual Network**: Red virtual vnet-canadacentral con espacio de direcciones 10.0.0.0/16
-- **Network Security Group**: Reglas de seguridad para SSH (22) y aplicación (3000)
-- **Aplicación FibonacciApp**: Ejecutándose en Node.js en cada VM
-
-### Cómo generar el diagrama
-
-El diagrama está definido en el archivo `diagrama-despliegue.puml` usando PlantUML. Para regenerarlo:
-
-```bash
-# Instalar Java y Graphviz (si no están instalados)
-sudo apt-get install -y default-jre graphviz
-
-# Descargar PlantUML
-wget https://github.com/plantuml/plantuml/releases/download/v1.2024.7/plantuml-1.2024.7.jar
-
-# Generar el diagrama
-java -jar plantuml-1.2024.7.jar diagrama-despliegue.puml
-```
-
-El archivo PNG generado mostrará la arquitectura completa de la solución.
-
+![Diagrama de Despliegue](images/lab/parte2/Diagrama%20de%20Despliegue%20-%20Escalabilidad%20Horizontal%20Azure.png)
